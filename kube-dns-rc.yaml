@@ -50,7 +50,15 @@ spec:
         args:
         - --domain=cluster.local. 
         - --dns-port=10053
-        - --kube-master-url=http://192.168.3.225:8080
+        - --kube-master-url=https://192.168.3.226:6443
+        - --kubecfg-file=/etc/kubernetes/worker-kubeconfig.yaml
+        volumeMounts: 
+        - mountPath: /etc/kubernetes/ssl 
+          name: ssl-certs-kubernetes 
+        - mountPath: /etc/ssl/certs 
+          name: ssl-certs-host 
+        - mountPath: /etc/kubernetes/worker-kubeconfig.yaml 
+          name: config
         ports:
         - containerPort: 10053
           name: dns-local
@@ -101,3 +109,13 @@ spec:
         - containerPort: 8080
           protocol: TCP
       dnsPolicy: Default  # Don't use cluster DNS.
+      volumes: 
+      - hostPath: 
+          path: /etc/kubernetes/ssl  
+        name: ssl-certs-kubernetes  
+      - hostPath: 
+          path: /etc/pki/tls/certs  
+        name: ssl-certs-host  
+      - hostPath: 
+          path: /etc/kubernetes/worker-kubeconfig.yaml 
+        name: config
